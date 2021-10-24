@@ -532,3 +532,49 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+
+int 
+ps(void)
+{
+
+	struct proc *p;
+
+	acquire(&ptable.lock);
+	cprintf("NAME \t PID \t PPID \t STATE \n");
+	for(p=ptable.proc; p<&ptable.proc[NPROC]; p++)
+	{
+		if(p->pid > 0)
+		{
+			switch(p->state)
+			{
+				case UNUSED:
+				cprintf("%s \t %d \t %d \t UNUSED \n", p->name, p->pid, p->parent->pid);
+				break;
+
+				case EMBRYO:
+				cprintf("%s \t %d \t %d \t EMBRYO \n", p->name, p->pid, p->parent->pid);
+				break;
+
+				case SLEEPING:
+				cprintf("%s \t %d \t %d \t SLEEPING \n", p->name, p->pid, p->parent->pid);
+				break;
+				
+				case RUNNABLE:
+				cprintf("%s \t %d \t %d \t RUNNABLE \n", p->name, p->pid, p->parent->pid);
+				break;
+				
+				case RUNNING:
+				cprintf("%s \t %d \t %d \t RUNNING \n", p->name, p->pid, p->parent->pid);
+				break;
+				
+				case ZOMBIE:
+				cprintf("%s \t %d \t %d \t ZOMBIE \n", p->name, p->pid, p->parent->pid);
+				break;
+			}
+		}
+	}
+	release(&ptable.lock);
+	return 0;
+}
+
